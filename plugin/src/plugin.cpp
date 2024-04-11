@@ -4,7 +4,14 @@
 namespace plugin {
 
     void Initialise() {
-        BinaryNinja::LogInfo("-----> [InsightDebugger]: Initalise Plugin");
+        ServiceLocator::getInstance().provideService(
+            std::make_unique<BinaryNinja::Logger>(BNLogCreateLogger("InsightDebugger", 0)));
+        ServiceLocator::getInstance().provideService(std::make_unique<SessionManager>());
+        ServiceLocator::getInstance().provideService(std::make_unique<DebuggerWidgetManager>());
+
+        plugin::LogInfo("Initalise Plugin");
+        Sidebar::addSidebarWidgetType(new DebuggerWidgetType(QImage(":/debugger/debugger-yates"), "InsightDebugger"));
+        UIContext::registerNotification(new UIObserver());
     }
 
 } // namespace plugin
