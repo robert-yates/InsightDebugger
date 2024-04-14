@@ -19,7 +19,7 @@ DebuggerWidget::~DebuggerWidget() {
     plugin::LogInfo("DebuggerWidget::~DebuggerWidget");
 
     if (m_sessionActive)
-        ServiceLocator::getInstance().getService<SessionManager>()->removeSession(m_currentSessionName);
+        ServiceLocator::getInstance().getService<SessionManager>()->removeSession(m_widgetBVName);
 
     ServiceLocator::getInstance().getService<DebuggerWidgetManager>()->removeDebuggerWidget(this);
     ServiceLocator::getInstance().getService<DebuggerWidgetManager>()->refresh();
@@ -91,11 +91,27 @@ QVBoxLayout* DebuggerWidget::createDebuggerLayout() {
     plugin::LogInfo("DebuggerWidget::createDebuggerLayout");
 
     QVBoxLayout* debuggerLayout = new QVBoxLayout(this);
+    QSplitter* splitter = new QSplitter(Qt::Vertical, this);
+    splitter->setChildrenCollapsible(true);
 
-    QString tmpText = QString("Hello Debugger: Session: %1").arg(QString::fromStdString(m_currentSessionName));
-    m_insightDebuggerLabel = new QLabel(tmpText, this);
-    m_insightDebuggerLabel->setAlignment(Qt::AlignCenter);
-    debuggerLayout->addWidget(m_insightDebuggerLabel);
+    debuggerLayout->setContentsMargins(0, 0, 0, 0);
+    debuggerLayout->setSpacing(0);
+    debuggerLayout->setAlignment(Qt::AlignTop);
+
+    m_controlsWidget = new WidgetControls(splitter);
+
+    QTabWidget* tabs = new QTabWidget(splitter);
+    m_registersWidget = new WidgetRegisters(tabs);
+    tabs->addTab(m_registersWidget, "Registers");
+
+    splitter->addWidget(m_controlsWidget);
+    splitter->addWidget(tabs);
+    debuggerLayout->addWidget(splitter);
+
+    QString statusText = QString("Session: %1").arg(QString::fromStdString(m_currentSessionName));
+    m_statusLabel = new QLabel(statusText, this);
+    m_statusLabel->setStyleSheet("QLabel { background: palette(base); }");
+    debuggerLayout->addWidget(m_statusLabel);
 
     return debuggerLayout;
 }
@@ -116,8 +132,8 @@ void DebuggerWidget::refresh() {
             refresh(); // recursive call back to refresh the switched session view state
         }
 
-        QString tmpText = QString("Hello Debugger:\nSession: %1").arg(QString::fromStdString(m_currentSessionName));
-        m_insightDebuggerLabel->setText(tmpText);
+        QString statusText = QString("Session: %1").arg(QString::fromStdString(m_currentSessionName));
+        m_statusLabel->setText(statusText);
     } else {
         // Session selector layout is active
 

@@ -1,6 +1,6 @@
 # InsightDebugger
 
-** Experimental WIP**
+** Experimental WIP **
 
 # The Plan
 

@@ -9,6 +9,7 @@
 #include "uicontext.h"
 #include "uitypes.h"
 #include "viewframe.h"
+#include "widgets.h"
 #include <QtWidgets>
 #include <string>
 #include <vector>
@@ -64,14 +65,20 @@ class DebuggerWidget : public SidebarWidget {
     QVBoxLayout* createDefaultLayout();
     QVBoxLayout* createDebuggerLayout();
 
+    // Session Widgets
     std::string m_widgetBVName{};
     QComboBox* m_sessionDropdown;
     QPushButton* m_joinSessionButton;
     QStackedWidget* m_stackedWidget;
 
+    // Session Info
     std::string m_currentSessionName{};
-    QLabel* m_insightDebuggerLabel;
     bool m_sessionActive = false;
+
+    // Debugger Widgets
+    WidgetControls* m_controlsWidget;
+    WidgetRegisters* m_registersWidget;
+    QLabel* m_statusLabel;
 
     BinaryNinja::Ref<BinaryNinja::BinaryView> m_bv;
     enum class WidgetState { kSessionSelector = 0, kDebugger = 1 };

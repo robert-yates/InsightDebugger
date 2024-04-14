@@ -17,6 +17,10 @@ add_library(${PROJECT_NAME} SHARED  src/plugin.cpp
                                     src/Session.cpp
                                     src/SessionManager.cpp
 
+                                    inc/widgets.h
+                                    src/Widgets/Controls.cpp
+                                    src/Widgets/Registers.cpp
+
                                     debuggerui.qrc
                                     ${MOCS}
 )
